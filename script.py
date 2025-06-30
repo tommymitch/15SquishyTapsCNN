@@ -38,15 +38,6 @@ class Simple1DCNN1(nn.Module):
         return x
 
 
-def show_menu():
-    print("\n=== Main Menu ===")
-    print("1. Train")
-    print("2. Evaluate")
-    print("3. Save")
-    print("4. Load")
-    print("5. Exit")
-
-
 def load_data_set(filename):
     data = np.loadtxt(filename, delimiter=",")
     y = data[:, 0]
@@ -145,7 +136,7 @@ def evaluate(model, test_loader, loss):
         correct += (predicted == labels).sum().item()
 
         print(f"Loss: {loss.item():.4f} | Acc: {100 * correct / total:.2f}%")
-        
+
     matrix = confusion_matrix(labels, predicted, labels=np.unique(labels))
     plt.figure(figsize=(10, 10))
     seaborn.heatmap(matrix, annot=True, fmt="d", xticklabels=np.unique(labels), yticklabels=np.unique(labels), cmap="Greens")
@@ -158,20 +149,31 @@ def evaluate(model, test_loader, loss):
     print(accuracy)
 
 
-while True:
-    show_menu()
-    choice = input("Enter your choice (1-4): ")
+menu = [
+    "Train",
+    "Evaluate",
+    "Save",
+    "Load",
+    "Exit",
+]
 
-    if choice == "1":
-        model, test_loader, loss = train()
-    elif choice == "2":
-        evaluate(model, test_loader, loss)
-    elif choice == "3":
-        save()
-    elif choice == "4":
-        load()
-    elif choice == "5":
-        print("Exiting program. Goodbye!")
-        break
-    else:
-        print("Invalid choice. Please try again.")
+while True:
+    for index, name in enumerate(menu):
+        print(f"{index + 1}. {name}")
+
+    choice = input(f"Enter your choice (1-{len(menu)}): ")
+
+    match choice:
+        case "1":
+            model, test_loader, loss = train()
+        case "2":
+            evaluate(model, test_loader, loss)
+        case "3":
+            save()
+        case "4":
+            load()
+        case "5":
+            print("Exiting program. Goodbye!")
+            break
+
+    print("Invalid choice. Please try again.")
